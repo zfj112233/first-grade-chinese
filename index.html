@@ -1153,16 +1153,17 @@
         document.getElementById("recitePrompt").textContent = "暂无背诵小测";
         return;
       }
-      const index = Math.min(1, recite.lines.length - 1);
-      reciteAsk = { recite, mode: "next", prompt: recite.lines[index - 1], answer: recite.lines[index] };
-      document.getElementById("recitePrompt").textContent = `请接下一句：${reciteAsk.prompt}`;
+      reciteAsk = { recite, mode: "full", prompt: recite.title, answer: recite.lines.join("") };
+      document.getElementById("recitePrompt").textContent = `请背完整篇：《${recite.title}》`;
     }
 
     function checkRecite() {
       if (!reciteAsk) return;
       const input = document.getElementById("reciteAnswer").value;
       const right = reciteAsk.answer;
-      const ok = normalizeText(input) === normalizeText(right);
+      const normalizedInput = normalizeText(input);
+      const normalizedRight = normalizeText(right);
+      const ok = normalizedInput === normalizedRight;
       const result = document.getElementById("reciteResult");
       if (ok) {
         result.innerHTML = `<span style="color:var(--ok)">背对啦！</span>`;
@@ -1177,7 +1178,8 @@
         state.reciteDoneToday = true;
         saveState();
       } else {
-        result.innerHTML = `<span style="color:var(--bad)">有一点不一样。</span><br><span class="diff">正确：${right}</span>`;
+        const message = normalizedInput.length < normalizedRight.length ? "还没有背完整。" : "有内容不一样。";
+        result.innerHTML = `<span style="color:var(--bad)">${message}</span><br><span class="diff">正确：${right}</span>`;
         speak(right);
       }
       render();
@@ -1308,7 +1310,7 @@
       const recite = dailyRecitation();
       if (recite) speak(recite.lines.join(""));
     });
-    document.getElementById("readPrompt").addEventListener("click", () => reciteAsk && speak(reciteAsk.prompt));
+    document.getElementById("readPrompt").addEventListener("click", () => reciteAsk && speak(reciteAsk.answer));
     document.getElementById("playQuizSound").addEventListener("click", () => currentQuizTarget && speak(currentQuizTarget.char));
     document.getElementById("topTotalTest").addEventListener("click", startAllCharsTest);
     document.getElementById("nextQuiz").addEventListener("click", () => {
