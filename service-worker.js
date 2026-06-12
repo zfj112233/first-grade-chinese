@@ -1,4 +1,4 @@
-const CACHE_NAME = "grade-one-chinese-v1";
+const CACHE_NAME = "grade-one-chinese-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
