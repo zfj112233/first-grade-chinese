@@ -1,0 +1,1339 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#d66ab4">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="一年级语文">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <title>一年级语文学习</title>
+  <style>
+    :root {
+      --bg: #fff7fc;
+      --panel: #ffffff;
+      --panel-2: #fff0f8;
+      --primary: #d66ab4;
+      --primary-2: #b78cff;
+      --accent: #ffd66b;
+      --accent-2: #ff8f8f;
+      --ink: #35293a;
+      --muted: #7c6f82;
+      --line: #f1ddeb;
+      --ok: #36a886;
+      --bad: #e35d6a;
+      --shadow: 0 14px 34px rgba(160, 98, 139, .16);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 15% 5%, rgba(255, 214, 107, .24), transparent 26%),
+        radial-gradient(circle at 85% 12%, rgba(183, 140, 255, .18), transparent 30%),
+        var(--bg);
+      line-height: 1.45;
+    }
+
+    button, input, textarea, select {
+      font: inherit;
+      color: inherit;
+    }
+
+    button {
+      border: 0;
+      border-radius: 16px;
+      background: var(--panel-2);
+      min-height: 44px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .app {
+      width: min(100%, 520px);
+      margin: 0 auto;
+      min-height: 100%;
+      padding: 16px 14px 94px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 4px 14px;
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: 26px;
+      letter-spacing: 0;
+    }
+
+    .title p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .72);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .book-switch {
+      display: grid;
+      gap: 6px;
+      justify-items: end;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+
+    .book-switch select {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .9);
+      border-radius: 999px;
+      min-height: 38px;
+      padding: 6px 12px;
+      font-weight: 800;
+      color: var(--primary);
+      max-width: 150px;
+    }
+
+    .mini-btn {
+      min-height: 38px;
+      border-radius: 999px;
+      padding: 6px 12px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: #fff;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .card {
+      background: rgba(255, 255, 255, .86);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: 19px;
+    }
+
+    .muted { color: var(--muted); }
+    .small { font-size: 13px; }
+    .strong { font-weight: 900; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .stat {
+      border-radius: 18px;
+      background: var(--panel-2);
+      padding: 12px;
+      min-height: 82px;
+    }
+
+    .stat b {
+      display: block;
+      font-size: 24px;
+      margin-top: 4px;
+    }
+
+    .task-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .task {
+      display: grid;
+      grid-template-columns: 42px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 18px;
+      padding: 10px;
+    }
+
+    .task-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: #fff;
+      font-weight: 900;
+      font-size: 20px;
+    }
+
+    .primary-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: #fff;
+      font-weight: 900;
+      box-shadow: 0 12px 22px rgba(214, 106, 180, .24);
+    }
+
+    .ghost-btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--primary);
+      font-weight: 800;
+    }
+
+    .danger-btn {
+      border: 1px solid rgba(227, 93, 106, .22);
+      background: rgba(227, 93, 106, .1);
+      color: var(--bad);
+      font-weight: 800;
+    }
+
+    .grid-5 {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .char-card {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 18px;
+      min-height: 124px;
+      padding: 10px 6px;
+      text-align: center;
+      display: grid;
+      align-content: center;
+      gap: 4px;
+      position: relative;
+    }
+
+    .char-card .hanzi {
+      font-size: clamp(32px, 11vw, 46px);
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .pinyin {
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .speaker {
+      width: 34px;
+      height: 34px;
+      min-height: 34px;
+      border-radius: 12px;
+      display: inline-grid;
+      place-items: center;
+      margin: 0 auto;
+      background: var(--panel-2);
+    }
+
+    .recite-lines {
+      display: grid;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .line {
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: var(--panel-2);
+      font-size: 18px;
+      text-align: center;
+    }
+
+    .quiz-choice-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .choice {
+      min-height: 86px;
+      border-radius: 20px;
+      background: #fff;
+      border: 2px solid var(--line);
+      font-size: 36px;
+      font-weight: 900;
+    }
+
+    .choice.correct {
+      border-color: var(--ok);
+      background: rgba(54, 168, 134, .12);
+    }
+
+    .choice.wrong {
+      border-color: var(--bad);
+      background: rgba(227, 93, 106, .12);
+      color: var(--bad);
+    }
+
+    .progress {
+      height: 10px;
+      border-radius: 99px;
+      overflow: hidden;
+      background: var(--panel-2);
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      transition: width .25s ease;
+    }
+
+    .answer-box {
+      width: 100%;
+      min-height: 82px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 12px;
+      resize: vertical;
+    }
+
+    .result {
+      min-height: 24px;
+      margin-top: 10px;
+      font-weight: 800;
+    }
+
+    .diff {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: rgba(227, 93, 106, .1);
+      color: var(--bad);
+    }
+
+    .list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 16px;
+      padding: 10px 12px;
+    }
+
+    .reward {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .form-grid input,
+    .form-grid textarea,
+    .form-grid select {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 14px;
+      min-height: 44px;
+      padding: 10px 12px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .swatch {
+      min-height: 54px;
+      border: 2px solid transparent;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .swatch.active {
+      border-color: var(--ink);
+    }
+
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: min(100%, 520px);
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+      padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+      background: rgba(255, 255, 255, .92);
+      border-top: 1px solid var(--line);
+      backdrop-filter: blur(16px);
+      z-index: 5;
+    }
+
+    .nav-btn {
+      border-radius: 16px;
+      min-height: 58px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      display: grid;
+      place-items: center;
+      gap: 2px;
+    }
+
+    .nav-btn span {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .nav-btn.active {
+      background: var(--panel-2);
+      color: var(--primary);
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 88px;
+      transform: translateX(-50%) translateY(20px);
+      width: min(92%, 420px);
+      background: rgba(53, 41, 58, .92);
+      color: #fff;
+      border-radius: 16px;
+      padding: 12px 14px;
+      opacity: 0;
+      pointer-events: none;
+      transition: .25s ease;
+      z-index: 10;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 380px) {
+      .grid-5 { grid-template-columns: repeat(3, 1fr); }
+      .stats { grid-template-columns: 1fr; }
+      .quiz-choice-grid { grid-template-columns: repeat(2, 1fr); }
+      .theme-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="title">
+        <h1>一年级语文</h1>
+        <p id="subtitle">每天一点点，稳稳会更多</p>
+      </div>
+      <div class="book-switch">
+        <select id="bookSelect" aria-label="切换教材">
+          <option value="upper">一年级上册</option>
+          <option value="lower">一年级下册</option>
+        </select>
+        <div class="top-actions">
+          <button class="mini-btn" id="topTotalTest">总测</button>
+          <div class="pill" aria-label="星星积分">⭐ <span id="starCount">0</span></div>
+        </div>
+      </div>
+    </header>
+
+    <section id="today" class="screen active" aria-label="今日">
+      <div class="card">
+        <div class="section-head">
+          <h2>今日任务</h2>
+          <span class="pill">连续 <b id="streakCount">0</b> 天</span>
+        </div>
+        <div class="stats">
+          <div class="stat"><span class="muted small">未掌握生字</span><b id="leftChars">0</b></div>
+          <div class="stat"><span class="muted small">已掌握内容</span><b id="masteredTotal">0</b></div>
+          <div class="stat"><span class="muted small">今日星星</span><b id="todayStars">0</b></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-head">
+          <h2>今天学这些</h2>
+          <span class="muted small" id="todayDate"></span>
+        </div>
+        <div class="task-list" id="todayTasks"></div>
+        <button class="primary-btn" style="margin-top:12px" data-go="learn">开始学习</button>
+      </div>
+
+      <div class="card">
+        <div class="section-head">
+          <h2>小心愿</h2>
+          <button class="ghost-btn" data-go="achieve">去兑换</button>
+        </div>
+        <div id="nextReward" class="muted">完成任务攒星星，可以兑换小奖励。</div>
+      </div>
+    </section>
+
+    <section id="learn" class="screen" aria-label="学习">
+      <div class="card">
+        <div class="section-head">
+          <h2>5个生字</h2>
+          <button class="ghost-btn" id="readAllChars">读一遍</button>
+        </div>
+        <div class="grid-5" id="charCards"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-head">
+          <h2>每日背诵</h2>
+          <button class="speaker" id="readRecite" aria-label="朗读背诵">🔊</button>
+        </div>
+        <div id="reciteCard"></div>
+        <button class="primary-btn" data-go="test">学完了，去测试</button>
+      </div>
+    </section>
+
+    <section id="test" class="screen" aria-label="测试">
+      <div class="card">
+        <div class="section-head">
+          <h2>随堂测试</h2>
+          <span class="pill"><span id="quizNow">1</span>/<span id="quizTotal">5</span></span>
+        </div>
+        <div class="progress" aria-hidden="true"><span id="quizProgress"></span></div>
+        <p class="strong" id="quizQuestion" style="font-size:20px;margin:16px 0 8px"></p>
+        <button class="primary-btn" id="playQuizSound" style="margin-bottom:12px">🔊 听读音</button>
+        <div class="quiz-choice-grid" id="quizChoices"></div>
+        <div class="result" id="quizResult"></div>
+        <button class="primary-btn" id="nextQuiz" style="display:none">下一题</button>
+      </div>
+
+      <div class="card">
+        <div class="section-head">
+          <h2>背诵小测</h2>
+          <button class="speaker" id="readPrompt" aria-label="朗读题目">🔊</button>
+        </div>
+        <p id="recitePrompt" class="strong"></p>
+        <textarea class="answer-box" id="reciteAnswer" placeholder="可以语音输入，也可以手写输入"></textarea>
+        <div class="row" style="margin-top:10px">
+          <button class="ghost-btn" id="voiceInput">语音输入</button>
+          <button class="primary-btn" id="checkRecite">检查背诵</button>
+        </div>
+        <div class="result" id="reciteResult"></div>
+      </div>
+    </section>
+
+    <section id="achieve" class="screen" aria-label="成就">
+      <div class="card">
+        <div class="section-head">
+          <h2>成就</h2>
+          <span class="pill">⭐ <span id="achieveStars">0</span></span>
+        </div>
+        <div class="stats">
+          <div class="stat"><span class="muted small">已掌握生字</span><b id="masteredCharsCount">0</b></div>
+          <div class="stat"><span class="muted small">已掌握背诵</span><b id="masteredReciteCount">0</b></div>
+          <div class="stat"><span class="muted small">总星星</span><b id="starsStat">0</b></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-head">
+          <h2>测试已掌握</h2>
+          <button class="ghost-btn" id="reviewMastered">测试已掌握</button>
+        </div>
+        <button class="primary-btn" id="testAllChars" style="margin-bottom:12px">🔊 先把所有生字过一遍</button>
+        <div class="list" id="masteredList"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-head">
+          <h2>星星兑换</h2>
+          <span class="muted small">家长可在设置里修改</span>
+        </div>
+        <div class="list" id="rewardList"></div>
+      </div>
+    </section>
+
+    <section id="settings" class="screen" aria-label="设置">
+      <div class="card">
+        <div class="section-head">
+          <h2>主题颜色</h2>
+          <span class="muted small">默认浅粉紫</span>
+        </div>
+        <div class="theme-grid" id="themeGrid"></div>
+        <div class="row" style="margin-top:10px">
+          <input type="color" id="customPrimary" value="#d66ab4" aria-label="主颜色">
+          <input type="color" id="customSecond" value="#b78cff" aria-label="副颜色">
+        </div>
+        <button class="ghost-btn" id="saveCustomTheme" style="width:100%;margin-top:10px">保存自定义颜色</button>
+      </div>
+
+      <div class="card">
+        <div class="section-head">
+          <h2>兑换规则</h2>
+          <span class="muted small">不同星星换不同奖励</span>
+        </div>
+        <div class="form-grid">
+          <input id="rewardName" placeholder="奖励名称，例如：选一本绘本">
+          <input id="rewardCost" type="number" min="1" placeholder="需要多少星星">
+          <button class="primary-btn" id="addReward">添加奖励</button>
+        </div>
+        <div class="list" id="editRewardList" style="margin-top:12px"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-head">
+          <h2>更新内容</h2>
+          <span class="muted small">可加入下册或更多内容</span>
+        </div>
+        <div class="form-grid">
+          <textarea id="importBox" class="answer-box" placeholder='粘贴JSON，例如：{"book":"lower","chars":[{"char":"春","pinyin":"chun1","lesson":"一年级下册"}],"recitations":[{"id":"r_new","title":"春晓","lines":["春眠不觉晓，","处处闻啼鸟。"]}]}'></textarea>
+          <button class="ghost-btn" id="importContent">导入内容</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-head">
+          <h2>数据管理</h2>
+          <span class="muted small">谨慎操作</span>
+        </div>
+        <button class="danger-btn" id="resetData" style="width:100%">清空学习记录</button>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav" aria-label="主导航">
+    <button class="nav-btn active" data-go="today"><span>🏠</span>今日</button>
+    <button class="nav-btn" data-go="learn"><span>📖</span>学习</button>
+    <button class="nav-btn" data-go="test"><span>🎯</span>测试</button>
+    <button class="nav-btn" data-go="achieve"><span>🏆</span>成就</button>
+    <button class="nav-btn" data-go="settings"><span>⚙️</span>设置</button>
+  </nav>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    const baseChars = [
+      ["天","tian1","识字1"],["地","di4","识字1"],["人","ren2","识字1"],["你","ni3","识字1"],["我","wo3","识字1"],["他","ta1","识字1"],
+      ["一","yi1","识字2"],["二","er4","识字2"],["三","san1","识字2"],["四","si4","识字2"],["五","wu3","识字2"],["上","shang4","识字2"],["下","xia4","识字2"],
+      ["口","kou3","识字3"],["耳","er3","识字3"],["目","mu4","识字3"],["手","shou3","识字3"],["足","zu2","识字3"],["站","zhan4","识字3"],["坐","zuo4","识字3"],
+      ["日","ri4","识字4"],["月","yue4","识字4"],["水","shui3","识字4"],["火","huo3","识字4"],["山","shan1","识字4"],["石","shi2","识字4"],["田","tian2","识字4"],["禾","he2","识字4"],
+      ["对","dui4","识字5"],["云","yun2","识字5"],["雨","yu3","识字5"],["风","feng1","识字5"],["花","hua1","识字5"],["鸟","niao3","识字5"],["虫","chong2","识字5"],
+      ["六","liu4","园地"],["七","qi1","园地"],["八","ba1","园地"],["九","jiu3","园地"],["十","shi2","园地"],
+      ["爸","ba4","课文"],["妈","ma1","课文"],["马","ma3","课文"],["土","tu3","课文"],["不","bu4","课文"],["画","hua4","课文"],
+      ["打","da3","课文"],["棋","qi2","课文"],["鸡","ji1","课文"],["字","zi4","课文"],["词","ci2","课文"],["语","yu3","课文"],["句","ju4","课文"],["子","zi3","课文"],
+      ["桌","zhuo1","课文"],["纸","zhi3","课文"],["文","wen2","课文"],["数","shu4","课文"],["学","xue2","课文"],["音","yin1","课文"],["乐","yue4","课文"],
+      ["妹","mei4","课文"],["奶","nai3","课文"],["白","bai2","课文"],["皮","pi2","课文"],["小","xiao3","课文"],["桥","qiao2","课文"],["台","tai2","课文"],
+      ["雪","xue3","课文"],["儿","er2","课文"],["草","cao3","课文"],["家","jia1","课文"],["是","shi4","课文"],["车","che1","课文"],["羊","yang2","课文"],["走","zou3","课文"],["也","ye3","课文"]
+    ].map(([char, pinyin, lesson]) => ({ char, pinyin, lesson }));
+
+    const baseRecitations = [
+      { id: "r_jinmu", title: "金木水火土", type: "课文", lines: ["一二三四五，", "金木水火土。", "天地分上下，", "日月照今古。"] },
+      { id: "r_duiyun", title: "对韵歌", type: "课文", lines: ["云对雨，", "雪对风。", "花对树，", "鸟对虫。", "山清对水秀，", "柳绿对桃红。"] },
+      { id: "r_yonge", title: "咏鹅", type: "古诗", lines: ["鹅，鹅，鹅，", "曲项向天歌。", "白毛浮绿水，", "红掌拨清波。"] },
+      { id: "r_xiaochuan", title: "小小的船", type: "课文", lines: ["弯弯的月儿小小的船，", "小小的船儿两头尖。", "我在小小的船里坐，", "只看见闪闪的星星蓝蓝的天。"] },
+      { id: "r_jiangnan", title: "江南", type: "古诗", lines: ["江南可采莲，", "莲叶何田田。", "鱼戏莲叶间。", "鱼戏莲叶东，", "鱼戏莲叶西，", "鱼戏莲叶南，", "鱼戏莲叶北。"] },
+      { id: "r_hua", title: "画", type: "古诗", lines: ["远看山有色，", "近听水无声。", "春去花还在，", "人来鸟不惊。"] },
+      { id: "r_shengguoqi", title: "升国旗", type: "课文", lines: ["五星红旗，", "我们的国旗。", "国歌声中，", "徐徐升起。", "迎风飘扬，", "多么美丽。", "向着国旗，", "我们立正。", "望着国旗，", "我们敬礼。"] }
+    ];
+
+    const lowerChars = [
+      ["霜","shuang1","春夏秋冬"],["吹","chui1","春夏秋冬"],["落","luo4","春夏秋冬"],["降","jiang4","春夏秋冬"],["飘","piao1","春夏秋冬"],["游","you2","春夏秋冬"],["池","chi2","春夏秋冬"],["入","ru4","春夏秋冬"],
+      ["姓","xing4","姓氏歌"],["氏","shi4","姓氏歌"],["李","li3","姓氏歌"],["张","zhang1","姓氏歌"],["古","gu3","姓氏歌"],["吴","wu2","姓氏歌"],["赵","zhao4","姓氏歌"],["钱","qian2","姓氏歌"],["孙","sun1","姓氏歌"],["周","zhou1","姓氏歌"],["王","wang2","姓氏歌"],["官","guan1","姓氏歌"],
+      ["清","qing1","小青蛙"],["晴","qing2","小青蛙"],["眼","yan3","小青蛙"],["睛","jing1","小青蛙"],["保","bao3","小青蛙"],["护","hu4","小青蛙"],["害","hai4","小青蛙"],["事","shi4","小青蛙"],["情","qing2","小青蛙"],["请","qing3","小青蛙"],["让","rang4","小青蛙"],["病","bing4","小青蛙"],
+      ["相","xiang1","猜字谜"],["遇","yu4","猜字谜"],["喜","xi3","猜字谜"],["欢","huan1","猜字谜"],["怕","pa4","猜字谜"],["言","yan2","猜字谜"],["互","hu4","猜字谜"],["令","ling4","猜字谜"],["动","dong4","猜字谜"],["万","wan4","猜字谜"],["纯","chun2","猜字谜"],["净","jing4","猜字谜"],
+      ["吃","chi1","吃水不忘挖井人"],["忘","wang4","吃水不忘挖井人"],["井","jing3","吃水不忘挖井人"],["村","cun1","吃水不忘挖井人"],["叫","jiao4","吃水不忘挖井人"],["毛","mao2","吃水不忘挖井人"],["主","zhu3","吃水不忘挖井人"],["席","xi2","吃水不忘挖井人"],["乡","xiang1","吃水不忘挖井人"],["亲","qin1","吃水不忘挖井人"],["战","zhan4","吃水不忘挖井人"],["士","shi4","吃水不忘挖井人"],["面","mian4","吃水不忘挖井人"],
+      ["想","xiang3","我多想去看看"],["告","gao4","我多想去看看"],["诉","su4","我多想去看看"],["路","lu4","我多想去看看"],["京","jing1","我多想去看看"],["安","an1","我多想去看看"],["门","men2","我多想去看看"],["广","guang3","我多想去看看"],["非","fei1","我多想去看看"],["常","chang2","我多想去看看"],["壮","zhuang4","我多想去看看"],["观","guan1","我多想去看看"],
+      ["接","jie1","一个接一个"],["觉","jiao4","一个接一个"],["再","zai4","一个接一个"],["做","zuo4","一个接一个"],["各","ge4","一个接一个"],["种","zhong3","一个接一个"],["样","yang4","一个接一个"],["梦","meng4","一个接一个"],["伙","huo3","一个接一个"],["伴","ban4","一个接一个"],["却","que4","一个接一个"],["趣","qu4","一个接一个"],["这","zhe4","一个接一个"],
+      ["太","tai4","四个太阳"],["阳","yang2","四个太阳"],["道","dao4","四个太阳"],["送","song4","四个太阳"],["忙","mang2","四个太阳"],["尝","chang2","四个太阳"],["香","xiang1","四个太阳"],["甜","tian2","四个太阳"],["温","wen1","四个太阳"],["暖","nuan3","四个太阳"],["该","gai1","四个太阳"],["颜","yan2","四个太阳"],["因","yin1","四个太阳"],
+      ["辆","liang4","小公鸡和小鸭子"],["匹","pi3","小公鸡和小鸭子"],["册","ce4","小公鸡和小鸭子"],["支","zhi1","小公鸡和小鸭子"],["铅","qian1","小公鸡和小鸭子"],["棵","ke1","小公鸡和小鸭子"],["架","jia4","小公鸡和小鸭子"],
+      ["块","kuai4","小公鸡和小鸭子"],["捉","zhuo1","小公鸡和小鸭子"],["急","ji2","小公鸡和小鸭子"],["直","zhi2","小公鸡和小鸭子"],["河","he2","小公鸡和小鸭子"],["行","xing2","小公鸡和小鸭子"],["死","si3","小公鸡和小鸭子"],["信","xin4","小公鸡和小鸭子"],["跟","gen1","小公鸡和小鸭子"],["忽","hu1","小公鸡和小鸭子"],["喊","han3","小公鸡和小鸭子"],["身","shen1","小公鸡和小鸭子"],
+      ["只","zhi3","树和喜鹊"],["窝","wo1","树和喜鹊"],["孤","gu1","树和喜鹊"],["单","dan1","树和喜鹊"],["邻","lin2","树和喜鹊"],["居","ju1","树和喜鹊"],["招","zhao1","树和喜鹊"],["呼","hu1","树和喜鹊"],["静","jing4","树和喜鹊"],["乐","le4","树和喜鹊"],
+      ["怎","zen3","怎么都快乐"],["独","du2","怎么都快乐"],["跳","tiao4","怎么都快乐"],["绳","sheng2","怎么都快乐"],["讲","jiang3","怎么都快乐"],["得","dei3","怎么都快乐"],["羽","yu3","怎么都快乐"],["球","qiu2","怎么都快乐"],["戏","xi4","怎么都快乐"],["排","pai2","怎么都快乐"],["篮","lan2","怎么都快乐"],["连","lian2","怎么都快乐"],["运","yun4","怎么都快乐"],
+      ["夜","ye4","静夜思"],["思","si1","静夜思"],["床","chuang2","静夜思"],["光","guang1","静夜思"],["疑","yi2","静夜思"],["举","ju3","静夜思"],["望","wang4","静夜思"],["低","di1","静夜思"],["故","gu4","静夜思"],
+      ["胆","dan3","夜色"],["敢","gan3","夜色"],["往","wang3","夜色"],["外","wai4","夜色"],["勇","yong3","夜色"],["窗","chuang1","夜色"],["乱","luan4","夜色"],["偏","pian1","夜色"],["散","san4","夜色"],["原","yuan2","夜色"],["像","xiang4","夜色"],["微","wei1","夜色"],
+      ["端","duan1","端午粽"],["粽","zong4","端午粽"],["节","jie2","端午粽"],["总","zong3","端午粽"],["米","mi3","端午粽"],["间","jian1","端午粽"],["分","fen1","端午粽"],["豆","dou4","端午粽"],["肉","rou4","端午粽"],["带","dai4","端午粽"],["知","zhi1","端午粽"],["据","ju4","端午粽"],["念","nian4","端午粽"],
+      ["虹","hong2","彩虹"],["座","zuo4","彩虹"],["浇","jiao1","彩虹"],["提","ti2","彩虹"],["洒","sa3","彩虹"],["挑","tiao1","彩虹"],["兴","xing4","彩虹"],["镜","jing4","彩虹"],["拿","na2","彩虹"],["照","zhao4","彩虹"],["千","qian1","彩虹"],["裙","qun2","彩虹"],
+      ["蜻","qing1","动物儿歌"],["蜓","ting2","动物儿歌"],["迷","mi2","动物儿歌"],["藏","cang2","动物儿歌"],["造","zao4","动物儿歌"],["蚂","ma3","动物儿歌"],["蚁","yi3","动物儿歌"],["食","shi2","动物儿歌"],["粮","liang2","动物儿歌"],["蜘","zhi1","动物儿歌"],["蛛","zhu1","动物儿歌"],["网","wang3","动物儿歌"],
+      ["圆","yuan2","古对今"],["严","yan2","古对今"],["寒","han2","古对今"],["酷","ku4","古对今"],["暑","shu3","古对今"],["凉","liang2","古对今"],["晨","chen2","古对今"],["细","xi4","古对今"],["朝","zhao1","古对今"],["霞","xia2","古对今"],["夕","xi1","古对今"],["杨","yang2","古对今"],
+      ["操","cao1","操场上"],["场","chang3","操场上"],["拔","ba2","操场上"],["拍","pai1","操场上"],["跑","pao3","操场上"],["踢","ti1","操场上"],["铃","ling2","操场上"],["热","re4","操场上"],["闹","nao4","操场上"],["锻","duan4","操场上"],["炼","lian4","操场上"],["体","ti3","操场上"],
+      ["之","zhi1","人之初"],["初","chu1","人之初"],["性","xing4","人之初"],["善","shan4","人之初"],["习","xi2","人之初"],["教","jiao4","人之初"],["迁","qian1","人之初"],["贵","gui4","人之初"],["专","zhuan1","人之初"],["幼","you4","人之初"],["玉","yu4","人之初"],["器","qi4","人之初"],["义","yi4","人之初"]
+    ].map(([char, pinyin, lesson]) => ({ char, pinyin, lesson }));
+
+    const lowerRecitations = [
+      { id: "l_chunxiaqiudong", title: "春夏秋冬", type: "课文", lines: ["春风吹，", "夏雨落，", "秋霜降，", "冬雪飘。", "青草，红花，游鱼，飞鸟。"] },
+      { id: "l_xingshige", title: "姓氏歌", type: "课文", lines: ["你姓什么？我姓李。", "什么李？木子李。", "他姓什么？他姓张。", "什么张？弓长张。", "古月胡，口天吴，双人徐，言午许。"] },
+      { id: "l_xiaoqingwa", title: "小青蛙", type: "课文", lines: ["河水清清天气晴，", "小小青蛙大眼睛。", "保护禾苗吃害虫，", "做了不少好事情。", "请你爱护小青蛙，", "好让禾苗不生病。"] },
+      { id: "l_cai", title: "猜字谜", type: "课文", lines: ["左边绿，右边红，", "左右相遇起凉风。", "绿的喜欢及时雨，", "红的最怕水来攻。"] },
+      { id: "l_jingyesi", title: "静夜思", type: "古诗", lines: ["床前明月光，", "疑是地上霜。", "举头望明月，", "低头思故乡。"] },
+      { id: "l_xiaochi", title: "小池", type: "古诗", lines: ["泉眼无声惜细流，", "树阴照水爱晴柔。", "小荷才露尖尖角，", "早有蜻蜓立上头。"] },
+      { id: "l_chihe", title: "池上", type: "古诗", lines: ["小娃撑小艇，", "偷采白莲回。", "不解藏踪迹，", "浮萍一道开。"] },
+      { id: "l_xunren", title: "寻隐者不遇", type: "古诗", lines: ["松下问童子，", "言师采药去。", "只在此山中，", "云深不知处。"] },
+      { id: "l_hehua", title: "荷叶圆圆", type: "课文", lines: ["荷叶圆圆的，绿绿的。", "小水珠说：荷叶是我的摇篮。", "小蜻蜓说：荷叶是我的停机坪。", "小青蛙说：荷叶是我的歌台。", "小鱼儿说：荷叶是我的凉伞。"] },
+      { id: "l_renzhichu", title: "人之初", type: "课文", lines: ["人之初，性本善，", "性相近，习相远。", "苟不教，性乃迁，", "教之道，贵以专。", "子不学，非所宜，", "幼不学，老何为？", "玉不琢，不成器，", "人不学，不知义。"] }
+    ];
+
+    const BOOKS = {
+      upper: { name: "一年级上册", chars: baseChars, recitations: baseRecitations },
+      lower: { name: "一年级下册", chars: lowerChars, recitations: lowerRecitations }
+    };
+
+    const themes = {
+      pink: { name: "浅粉紫", bg: "#fff7fc", panel2: "#fff0f8", primary: "#d66ab4", second: "#b78cff", accent: "#ffd66b" },
+      purple: { name: "浅紫", bg: "#fbf8ff", panel2: "#f2eaff", primary: "#9c7ae6", second: "#d98bd7", accent: "#ffe08a" },
+      bluePink: { name: "蓝粉", bg: "#f8fbff", panel2: "#eef6ff", primary: "#6aa7e8", second: "#e58bc8", accent: "#ffdc73" },
+      peach: { name: "蜜桃", bg: "#fff8f5", panel2: "#fff0eb", primary: "#ee8f9b", second: "#d9a1ee", accent: "#ffcf68" }
+    };
+
+    const defaultState = {
+      currentBook: "upper",
+      stars: 0,
+      todayStars: 0,
+      masteredChars: { upper: [], lower: [] },
+      masteredRecitations: { upper: [], lower: [] },
+      learnedToday: [],
+      todayPlanChars: { upper: [], lower: [] },
+      todayPlanRecitation: { upper: "", lower: "" },
+      completedQuizChars: [],
+      rewards: [
+        { id: "rw10", name: "选一个睡前故事", cost: 10, redeemed: false },
+        { id: "rw30", name: "周末亲子游戏20分钟", cost: 30, redeemed: false },
+        { id: "rw60", name: "挑一本喜欢的绘本", cost: 60, redeemed: false },
+        { id: "rw100", name: "兑换一个大心愿", cost: 100, redeemed: false }
+      ],
+      extraChars: [],
+      extraRecitations: [],
+      theme: "pink",
+      customTheme: null,
+      lastDate: "",
+      streak: 0,
+      reciteDoneToday: false
+    };
+
+    let state = loadState();
+    let quizIndex = 0;
+    let currentChoices = [];
+    let quizMode = "daily";
+    let currentQuizTarget = null;
+    let reciteAsk = null;
+
+    function loadState() {
+      try {
+        return migrateState({ ...defaultState, ...JSON.parse(localStorage.getItem("gradeOneChineseState") || "{}") });
+      } catch {
+        return structuredClone(defaultState);
+      }
+    }
+
+    function migrateState(next) {
+      const oldChars = Array.isArray(next.masteredChars) ? next.masteredChars : null;
+      const oldRecites = Array.isArray(next.masteredRecitations) ? next.masteredRecitations : null;
+      const oldPlan = Array.isArray(next.todayPlanChars) ? next.todayPlanChars : null;
+      const oldPlanRecite = typeof next.todayPlanRecitation === "string" ? next.todayPlanRecitation : null;
+      next.currentBook = next.currentBook || "upper";
+      next.masteredChars = oldChars ? { upper: oldChars, lower: [] } : { upper: next.masteredChars?.upper || [], lower: next.masteredChars?.lower || [] };
+      next.masteredRecitations = oldRecites ? { upper: oldRecites, lower: [] } : { upper: next.masteredRecitations?.upper || [], lower: next.masteredRecitations?.lower || [] };
+      next.todayPlanChars = oldPlan ? { upper: oldPlan, lower: [] } : { upper: next.todayPlanChars?.upper || [], lower: next.todayPlanChars?.lower || [] };
+      next.todayPlanRecitation = oldPlanRecite !== null ? { upper: oldPlanRecite, lower: "" } : { upper: next.todayPlanRecitation?.upper || "", lower: next.todayPlanRecitation?.lower || "" };
+      return next;
+    }
+
+    function saveState() {
+      localStorage.setItem("gradeOneChineseState", JSON.stringify(state));
+    }
+
+    function currentBookKey() {
+      return BOOKS[state.currentBook] ? state.currentBook : "upper";
+    }
+
+    function currentBook() {
+      return BOOKS[currentBookKey()];
+    }
+
+    function masteredCharsFor(book = currentBookKey()) {
+      state.masteredChars[book] ||= [];
+      return state.masteredChars[book];
+    }
+
+    function masteredRecitationsFor(book = currentBookKey()) {
+      state.masteredRecitations[book] ||= [];
+      return state.masteredRecitations[book];
+    }
+
+    function todayPlanCharsFor(book = currentBookKey()) {
+      state.todayPlanChars[book] ||= [];
+      return state.todayPlanChars[book];
+    }
+
+    function fillTodayPlan(book = currentBookKey()) {
+      const mastered = new Set(masteredCharsFor(book));
+      const catalog = allChars();
+      const plan = todayPlanCharsFor(book).filter(ch => catalog.some(item => item.char === ch) && !mastered.has(ch));
+      for (const item of catalog) {
+        if (plan.length >= 5) break;
+        if (!mastered.has(item.char) && !plan.includes(item.char)) {
+          plan.push(item.char);
+        }
+      }
+      state.todayPlanChars[book] = plan;
+      return plan.map(ch => catalog.find(item => item.char === ch)).filter(Boolean);
+    }
+
+    function allChars() {
+      const seen = new Set();
+      const book = currentBookKey();
+      return [...currentBook().chars, ...(state.extraChars || []).filter(item => (item.book || book) === book)].filter(item => {
+        if (!item || !item.char || seen.has(item.char)) return false;
+        seen.add(item.char);
+        return true;
+      });
+    }
+
+    function allRecitations() {
+      const seen = new Set();
+      const book = currentBookKey();
+      return [...currentBook().recitations, ...(state.extraRecitations || []).filter(item => (item.book || book) === book)].filter(item => {
+        if (!item || !item.id || seen.has(item.id)) return false;
+        seen.add(item.id);
+        return true;
+      });
+    }
+
+    function todayKey() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    }
+
+    function rolloverDay() {
+      const today = todayKey();
+      if (state.lastDate === today) return;
+      if (state.lastDate) {
+        const prev = new Date(state.lastDate);
+        const now = new Date(today);
+        const diff = Math.round((now - prev) / 86400000);
+        state.streak = diff === 1 ? (state.streak || 0) + 1 : 1;
+      } else {
+        state.streak = 1;
+      }
+      state.lastDate = today;
+      state.todayStars = 0;
+      state.learnedToday = [];
+      state.todayPlanChars = { upper: [], lower: [] };
+      state.todayPlanRecitation = { upper: "", lower: "" };
+      state.completedQuizChars = [];
+      state.reciteDoneToday = false;
+      saveState();
+    }
+
+    function dailyChars() {
+      const book = currentBookKey();
+      const planned = fillTodayPlan(book);
+      saveState();
+      return planned;
+    }
+
+    function dailyRecitation() {
+      const book = currentBookKey();
+      const mastered = new Set(masteredRecitationsFor(book));
+      const catalog = allRecitations();
+      if (state.todayPlanRecitation[book]) {
+        const planned = catalog.find(item => item.id === state.todayPlanRecitation[book]);
+        if (planned && !mastered.has(planned.id)) return planned;
+      }
+      const picked = catalog.find(item => !mastered.has(item.id)) || catalog[0];
+      state.todayPlanRecitation[book] = picked ? picked.id : "";
+      saveState();
+      return picked;
+    }
+
+    function addStars(count, reason) {
+      state.stars += count;
+      state.todayStars += count;
+      saveState();
+      toast(`+${count}星 ${reason}`);
+      render();
+    }
+
+    function speak(text) {
+      if (!("speechSynthesis" in window)) {
+        showSpeechHelp();
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = "zh-CN";
+      utter.rate = 0.78;
+      utter.onerror = () => showSpeechHelp();
+      window.speechSynthesis.speak(utter);
+    }
+
+    function showSpeechHelp() {
+      toast("当前打开方式不支持朗读，请用 Safari、Chrome 或 Edge 打开");
+    }
+
+    function normalizeText(text) {
+      return String(text || "").replace(/[，。！？、“”‘’\s,.!?]/g, "");
+    }
+
+    function shuffle(items) {
+      return [...items].sort(() => Math.random() - 0.5);
+    }
+
+    function toast(text) {
+      const el = document.getElementById("toast");
+      el.textContent = text;
+      el.classList.add("show");
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => el.classList.remove("show"), 1800);
+    }
+
+    function setScreen(id) {
+      document.querySelectorAll(".screen").forEach(el => el.classList.toggle("active", el.id === id));
+      document.querySelectorAll(".nav-btn").forEach(el => el.classList.toggle("active", el.dataset.go === id));
+      if (id === "test") resetQuiz(false);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function applyTheme() {
+      const theme = state.theme === "custom" && state.customTheme ? state.customTheme : themes[state.theme] || themes.pink;
+      const root = document.documentElement.style;
+      root.setProperty("--bg", theme.bg || "#fff7fc");
+      root.setProperty("--panel-2", theme.panel2 || "#fff0f8");
+      root.setProperty("--primary", theme.primary || "#d66ab4");
+      root.setProperty("--primary-2", theme.second || "#b78cff");
+      root.setProperty("--accent", theme.accent || "#ffd66b");
+    }
+
+    function render() {
+      rolloverDay();
+      applyTheme();
+      const chars = dailyChars();
+      const recite = dailyRecitation();
+      const book = currentBookKey();
+      const masteredCount = masteredCharsFor(book).length + masteredRecitationsFor(book).length;
+      document.getElementById("bookSelect").value = book;
+      document.getElementById("subtitle").textContent = `${currentBook().name} · 每天一点点，稳稳会更多`;
+      document.getElementById("starCount").textContent = state.stars;
+      document.getElementById("achieveStars").textContent = state.stars;
+      document.getElementById("starsStat").textContent = state.stars;
+      document.getElementById("streakCount").textContent = state.streak || 1;
+      document.getElementById("leftChars").textContent = allChars().length - masteredCharsFor(book).length;
+      document.getElementById("masteredTotal").textContent = masteredCount;
+      document.getElementById("todayStars").textContent = state.todayStars;
+      document.getElementById("masteredCharsCount").textContent = masteredCharsFor(book).length;
+      document.getElementById("masteredReciteCount").textContent = masteredRecitationsFor(book).length;
+      document.getElementById("todayDate").textContent = todayKey();
+
+      renderTodayTasks(chars, recite);
+      renderLearn(chars, recite);
+      renderAchievements();
+      renderRewards();
+      renderSettings();
+      setupReciteQuestion();
+    }
+
+    function renderTodayTasks(chars, recite) {
+      const box = document.getElementById("todayTasks");
+      if (!chars.length) {
+        box.innerHTML = `<div class="task"><div class="task-icon">✓</div><div><b>生字都掌握啦</b><div class="muted small">可以去成就里复习已掌握内容</div></div><button class="ghost-btn" data-go="achieve">复习</button></div>`;
+      } else {
+        box.innerHTML = `
+          <div class="task"><div class="task-icon">字</div><div><b>5个生字</b><div class="muted small">${chars.map(c => c.char).join("、")}</div></div><button class="speaker" onclick="speak('${chars.map(c => c.char).join("，")}')">🔊</button></div>
+          <div class="task"><div class="task-icon">背</div><div><b>${recite ? recite.title : "背诵内容"}</b><div class="muted small">${recite ? recite.type : "暂无"}</div></div><button class="speaker" onclick="speak('${recite ? recite.lines.join("") : ""}')">🔊</button></div>
+          <div class="task"><div class="task-icon">测</div><div><b>随堂测试</b><div class="muted small">听读音，一个字一个字找</div></div><button class="ghost-btn" data-go="test">开始</button></div>
+        `;
+      }
+      const next = [...state.rewards].filter(r => !r.redeemed).sort((a, b) => a.cost - b.cost).find(r => r.cost > state.stars);
+      document.getElementById("nextReward").innerHTML = next
+        ? `再攒 <b>${next.cost - state.stars}</b> 星，可以兑换：<b>${escapeHtml(next.name)}</b>`
+        : `现在有 <b>${state.stars}</b> 星，可以去看看哪些小心愿能兑换。`;
+    }
+
+    function renderLearn(chars, recite) {
+      document.getElementById("charCards").innerHTML = chars.map(item => `
+        <div class="char-card">
+          <div class="hanzi">${item.char}</div>
+          <div class="pinyin">${item.pinyin}</div>
+          <button class="speaker" aria-label="朗读${item.char}" onclick="speak('${item.char}')">🔊</button>
+          <button class="ghost-btn small" onclick="markLearned('${item.char}')">学过了</button>
+        </div>
+      `).join("") || `<p class="muted">今日没有新的生字啦，去成就页复习一下吧。</p>`;
+
+      document.getElementById("reciteCard").innerHTML = recite ? `
+        <h3 style="margin:0 0 8px">${recite.title}</h3>
+        <div class="recite-lines">${recite.lines.map(line => `<div class="line">${line}</div>`).join("")}</div>
+      ` : `<p class="muted">暂无背诵内容。</p>`;
+    }
+
+    function renderAchievements() {
+      const book = currentBookKey();
+      const chars = masteredCharsFor(book).length
+        ? masteredCharsFor(book).map(ch => `<span class="pill">${ch}</span>`).join(" ")
+        : `<span class="muted">还没有已掌握生字，完成测试后会出现在这里。</span>`;
+      const recites = masteredRecitationsFor(book).length
+        ? masteredRecitationsFor(book).map(id => {
+          const item = allRecitations().find(r => r.id === id);
+          return `<span class="pill">${item ? item.title : id}</span>`;
+        }).join(" ")
+        : `<span class="muted">背诵通过后会出现在这里。</span>`;
+      document.getElementById("masteredList").innerHTML = `
+        <div class="list-item"><div><b>${currentBook().name} 已掌握生字</b><div style="margin-top:8px">${chars}</div></div></div>
+        <div class="list-item"><div><b>${currentBook().name} 已掌握背诵</b><div style="margin-top:8px">${recites}</div></div></div>
+      `;
+    }
+
+    function renderRewards() {
+      const sorted = [...state.rewards].sort((a, b) => a.cost - b.cost);
+      document.getElementById("rewardList").innerHTML = sorted.map(r => `
+        <div class="list-item reward">
+          <div><b>${escapeHtml(r.name)}</b><div class="muted small">${r.cost} 星 ${r.redeemed ? "｜已兑换" : ""}</div></div>
+          <button class="${state.stars >= r.cost && !r.redeemed ? "primary-btn" : "ghost-btn"}" onclick="redeemReward('${r.id}')">${r.redeemed ? "完成" : "兑换"}</button>
+        </div>
+      `).join("");
+
+      document.getElementById("editRewardList").innerHTML = sorted.map(r => `
+        <div class="list-item reward">
+          <div><b>${escapeHtml(r.name)}</b><div class="muted small">${r.cost} 星 ${r.redeemed ? "｜已兑换" : ""}</div></div>
+          <button class="danger-btn" onclick="deleteReward('${r.id}')">删除</button>
+        </div>
+      `).join("");
+    }
+
+    function renderSettings() {
+      const entries = Object.entries(themes);
+      document.getElementById("themeGrid").innerHTML = entries.map(([key, t]) => `
+        <button class="swatch ${state.theme === key ? "active" : ""}" style="background:linear-gradient(135deg,${t.primary},${t.second});color:white" onclick="setTheme('${key}')">${t.name}</button>
+      `).join("") + `<button class="swatch ${state.theme === "custom" ? "active" : ""}" style="background:linear-gradient(135deg,var(--primary),var(--primary-2));color:white" onclick="setTheme('custom')">自定义</button>`;
+    }
+
+    function markLearned(char) {
+      if (!state.learnedToday.includes(char)) {
+        state.learnedToday.push(char);
+        addStars(1, `学了 ${char}`);
+      } else {
+        toast("这个字今天已经加过星啦");
+      }
+    }
+
+    function resetQuiz(asReview) {
+      quizMode = asReview ? "review" : "daily";
+      quizIndex = 0;
+      state.completedQuizChars = state.completedQuizChars || [];
+      setupQuizQuestion();
+    }
+
+    function startAllCharsTest() {
+      quizMode = "all";
+      quizIndex = 0;
+      setScreen("test");
+      setupQuizQuestion();
+    }
+
+    function setupQuizQuestion() {
+      const book = currentBookKey();
+      const targets = quizMode === "review"
+        ? allChars().filter(c => masteredCharsFor(book).includes(c.char))
+        : quizMode === "all"
+          ? allChars()
+          : dailyChars();
+      document.getElementById("quizTotal").textContent = Math.max(targets.length, 1);
+      document.getElementById("quizNow").textContent = Math.min(quizIndex + 1, Math.max(targets.length, 1));
+      document.getElementById("quizProgress").style.width = `${targets.length ? (quizIndex / targets.length) * 100 : 100}%`;
+      document.getElementById("nextQuiz").style.display = "none";
+      document.getElementById("quizResult").textContent = "";
+      currentQuizTarget = null;
+
+      if (!targets.length || quizIndex >= targets.length) {
+        const doneText = quizMode === "review" ? "还没有可测试的已掌握生字" : quizMode === "all" ? "所有生字过完啦" : "今天的生字测试完成啦";
+        document.getElementById("quizQuestion").textContent = doneText;
+        document.getElementById("quizChoices").innerHTML = "";
+        document.getElementById("quizProgress").style.width = "100%";
+        document.getElementById("playQuizSound").style.display = "none";
+        return;
+      }
+
+      const target = targets[quizIndex];
+      currentQuizTarget = target;
+      const pool = allChars().filter(c => c.char !== target.char);
+      currentChoices = shuffle([target, ...shuffle(pool).slice(0, 5)]).map(c => c.char);
+      const modeName = quizMode === "review" ? "测试已掌握" : quizMode === "all" ? "摸底所有生字" : "随堂测试";
+      document.getElementById("quizQuestion").textContent = `${modeName}：听读音，找到这个字`;
+      document.getElementById("playQuizSound").style.display = "block";
+      document.getElementById("quizChoices").innerHTML = currentChoices.map(ch => `<button class="choice" onclick="answerQuiz('${ch}', '${target.char}')">${ch}</button>`).join("");
+      setTimeout(() => speak(target.char), 250);
+    }
+
+    function answerQuiz(choice, target) {
+      document.querySelectorAll(".choice").forEach(btn => {
+        btn.disabled = true;
+        if (btn.textContent === target) btn.classList.add("correct");
+        if (btn.textContent === choice && choice !== target) btn.classList.add("wrong");
+      });
+      if (choice === target) {
+        document.getElementById("quizResult").textContent = "答对啦！";
+        const book = currentBookKey();
+        if ((quizMode === "daily" || quizMode === "all") && !masteredCharsFor(book).includes(target)) {
+          masteredCharsFor(book).push(target);
+          state.todayPlanChars[book] = todayPlanCharsFor(book).filter(ch => ch !== target);
+          fillTodayPlan(book);
+          addStars(2, `掌握 ${target}`);
+        } else if (quizMode === "review") {
+          addStars(1, "复习正确");
+        } else {
+          addStars(1, "答对啦");
+        }
+      } else {
+        document.getElementById("quizResult").textContent = `再记一下，正确答案是 ${target}`;
+        speak(target);
+      }
+      document.getElementById("nextQuiz").style.display = "block";
+      saveState();
+    }
+
+    function setupReciteQuestion() {
+      const recite = dailyRecitation();
+      if (!recite || !recite.lines || recite.lines.length < 2) {
+        reciteAsk = null;
+        document.getElementById("recitePrompt").textContent = "暂无背诵小测";
+        return;
+      }
+      const index = Math.min(1, recite.lines.length - 1);
+      reciteAsk = { recite, mode: "next", prompt: recite.lines[index - 1], answer: recite.lines[index] };
+      document.getElementById("recitePrompt").textContent = `请接下一句：${reciteAsk.prompt}`;
+    }
+
+    function checkRecite() {
+      if (!reciteAsk) return;
+      const input = document.getElementById("reciteAnswer").value;
+      const right = reciteAsk.answer;
+      const ok = normalizeText(input) === normalizeText(right);
+      const result = document.getElementById("reciteResult");
+      if (ok) {
+        result.innerHTML = `<span style="color:var(--ok)">背对啦！</span>`;
+        const book = currentBookKey();
+        if (!masteredRecitationsFor(book).includes(reciteAsk.recite.id)) {
+          masteredRecitationsFor(book).push(reciteAsk.recite.id);
+          state.todayPlanRecitation[book] = "";
+          addStars(3, `背会 ${reciteAsk.recite.title}`);
+        } else if (!state.reciteDoneToday) {
+          addStars(1, "背诵复习");
+        }
+        state.reciteDoneToday = true;
+        saveState();
+      } else {
+        result.innerHTML = `<span style="color:var(--bad)">有一点不一样。</span><br><span class="diff">正确：${right}</span>`;
+        speak(right);
+      }
+      render();
+    }
+
+    function startVoiceInput() {
+      const answer = document.getElementById("reciteAnswer");
+      answer.focus();
+      answer.setSelectionRange(answer.value.length, answer.value.length);
+      toast("请点手机键盘上的话筒，说出答案");
+    }
+
+    function redeemReward(id) {
+      const reward = state.rewards.find(r => r.id === id);
+      if (!reward || reward.redeemed) return;
+      if (state.stars < reward.cost) {
+        toast(`还差 ${reward.cost - state.stars} 星`);
+        return;
+      }
+      state.stars -= reward.cost;
+      reward.redeemed = true;
+      saveState();
+      toast(`兑换成功：${reward.name}`);
+      render();
+    }
+
+    function deleteReward(id) {
+      state.rewards = state.rewards.filter(r => r.id !== id);
+      saveState();
+      render();
+    }
+
+    function addReward() {
+      const name = document.getElementById("rewardName").value.trim();
+      const cost = Number(document.getElementById("rewardCost").value);
+      if (!name || !cost || cost < 1) {
+        toast("请填写奖励名称和星星数量");
+        return;
+      }
+      state.rewards.push({ id: `rw${Date.now()}`, name, cost, redeemed: false });
+      document.getElementById("rewardName").value = "";
+      document.getElementById("rewardCost").value = "";
+      saveState();
+      render();
+    }
+
+    function setTheme(key) {
+      state.theme = key;
+      saveState();
+      render();
+    }
+
+    function saveCustomTheme() {
+      const primary = document.getElementById("customPrimary").value;
+      const second = document.getElementById("customSecond").value;
+      state.customTheme = {
+        name: "自定义",
+        bg: "#fffaff",
+        panel2: "#f8eefb",
+        primary,
+        second,
+        accent: "#ffd66b"
+      };
+      state.theme = "custom";
+      saveState();
+      render();
+      toast("主题颜色已保存");
+    }
+
+    function importContent() {
+      try {
+        const value = JSON.parse(document.getElementById("importBox").value);
+        const book = value.book && BOOKS[value.book] ? value.book : currentBookKey();
+        if (Array.isArray(value.chars)) {
+          state.extraChars = [...(state.extraChars || []), ...value.chars.filter(c => c.char).map(c => ({
+            char: c.char,
+            pinyin: c.pinyin || "",
+            lesson: c.lesson || "更新内容",
+            book: c.book || book
+          }))];
+        }
+        if (Array.isArray(value.recitations)) {
+          state.extraRecitations = [...(state.extraRecitations || []), ...value.recitations.filter(r => r.id && Array.isArray(r.lines)).map(r => ({
+            id: r.id,
+            title: r.title || r.id,
+            type: r.type || "更新内容",
+            lines: r.lines,
+            book: r.book || book
+          }))];
+        }
+        saveState();
+        document.getElementById("importBox").value = "";
+        toast("内容已导入");
+        render();
+      } catch {
+        toast("JSON格式不对，请检查后再导入");
+      }
+    }
+
+    function resetData() {
+      if (!confirm("确定清空学习记录、星星和兑换设置吗？")) return;
+      localStorage.removeItem("gradeOneChineseState");
+      state = structuredClone(defaultState);
+      saveState();
+      render();
+      toast("已清空");
+    }
+
+    function escapeHtml(text) {
+      return String(text).replace(/[&<>"']/g, s => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[s]));
+    }
+
+    document.addEventListener("click", event => {
+      const go = event.target.closest("[data-go]");
+      if (go) setScreen(go.dataset.go);
+    });
+
+    document.getElementById("bookSelect").addEventListener("change", event => {
+      state.currentBook = event.target.value;
+      quizIndex = 0;
+      quizMode = "daily";
+      saveState();
+      render();
+      toast(`已切换到${currentBook().name}`);
+    });
+    document.getElementById("readAllChars").addEventListener("click", () => speak(dailyChars().map(c => c.char).join("，")));
+    document.getElementById("readRecite").addEventListener("click", () => {
+      const recite = dailyRecitation();
+      if (recite) speak(recite.lines.join(""));
+    });
+    document.getElementById("readPrompt").addEventListener("click", () => reciteAsk && speak(reciteAsk.prompt));
+    document.getElementById("playQuizSound").addEventListener("click", () => currentQuizTarget && speak(currentQuizTarget.char));
+    document.getElementById("topTotalTest").addEventListener("click", startAllCharsTest);
+    document.getElementById("nextQuiz").addEventListener("click", () => {
+      quizIndex += 1;
+      setupQuizQuestion();
+    });
+    document.getElementById("checkRecite").addEventListener("click", checkRecite);
+    document.getElementById("voiceInput").addEventListener("click", startVoiceInput);
+    document.getElementById("reviewMastered").addEventListener("click", () => {
+      setScreen("test");
+      resetQuiz(true);
+    });
+    document.getElementById("testAllChars").addEventListener("click", startAllCharsTest);
+    document.getElementById("addReward").addEventListener("click", addReward);
+    document.getElementById("saveCustomTheme").addEventListener("click", saveCustomTheme);
+    document.getElementById("importContent").addEventListener("click", importContent);
+    document.getElementById("resetData").addEventListener("click", resetData);
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./service-worker.js").catch(() => {});
+      });
+    }
+
+    render();
+  </script>
+</body>
+</html>
